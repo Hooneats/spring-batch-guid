@@ -1,4 +1,4 @@
-package com.example.springbatchguide.step;
+package com.example.springbatchguide.step.tasklet;
 
 public class CustomService {
 

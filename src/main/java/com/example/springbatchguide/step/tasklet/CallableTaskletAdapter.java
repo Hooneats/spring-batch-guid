@@ -1,4 +1,4 @@
-package com.example.springbatchguide.step;
+package com.example.springbatchguide.step.tasklet;
 
 import com.example.springbatchguide.listener.JobLoggerListener;
 import lombok.RequiredArgsConstructor;

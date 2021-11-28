@@ -1,4 +1,4 @@
-package com.example.springbatchguide.step;
+package com.example.springbatchguide.step.tasklet;
 
 import com.example.springbatchguide.listener.JobLoggerListener;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
