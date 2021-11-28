@@ -40,3 +40,16 @@ chunkContext 는 ChunkContext 의 인스턴스로 실행 시점의 잡 상태를
 - 늦은 바인딩 : 특정 부분에 파라미터를 전달하는 가장 쉬운 방법은 스프링 구성을 사용해 주입하는 것이다.
 JobParameters 는 변경할 수 없으므로 부트스트랩 시에 바인딩하는 것이 좋다.
 
+*잡에게 파라미터를 전달하고 이를 사용할 수 있도록 제공하는 기능 외에,
+스프링 배치 프레임워크에 내장된 두가지 특화기능이 있다.
+첫번째는 파라미터 유효성 검증이며
+두번쨰는 파라미터를 실행시마다 증가시키는 기능이다.*
+
+## 01-잡구성하기 01) 잡 파라미터 유효성 검증하기
+- ParameterValidatorV1.jav 처럼 직접 구현할 수도 있지만,
+- 스프링 배치는 모든 필수 파라미터가 누락없이 전달됐는지 확인하는 검증기인 DefaultJobParametersValidator 를 기본적으로 제공한다.
+DefaultJobParametersValidator 는 requiredKeys 와 optionalKeys 라는 두가지 선택적인 의존성이 있다.
+각각 필수 파라미터 목록과 필수가 아닌 파라미터 목록을 의미한다.
+
+- 기본적으로 하나의 JobBuilder 에 하나의 JobParameterValidator 만 등록할 수 있다.
+스프링 배치는 이러한 문제점을 해결하기위해 CompositeJobParametersValidator 를 제공한다.
