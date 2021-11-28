@@ -60,4 +60,49 @@ DefaultJobParametersValidator 는 requiredKeys 와 optionalKeys 라는 두가지
 - RunIdIncrementer 를 적용하려면 잡 구성 작업 외에 추가적으로 JobParametersValidator 에 추가해 줘야한다.
 
 - 잡 실행시 마다 타임스탬프를 파라미터로 사용할 수도 있다.(`DailyJobTimestamper.java`) 이 방식을 사용하면 하루에 한번 실행되는 잡에 사용하기 유용할 것이다.
-- 
+
+# 02-잡리스너
+스프링 배치는 모든 측면에서 생명주기가 잘 정의돼 있다.
+잡 실행과 관련이 있다면 JobExecutionListener 를 사용할 수 있다. 이 인터페이스는 beforeJob 과 afterJob 의 두 메서드를 제공한다.
+beforeJob 과 afterJob 는 잡 생명 주기에서 가장 먼저 실행되거나 가장 나중에 실행된다. 다음과 같은 사례에 이러한 콜백을 적용할 수 있다.
+- 알림 : 스프링 클라우드 테스크 (spring cloud task) 는 잡의 시작이나 종료를 다른 시스템에 알리는 메시지 큐메시지를 생성하는 JobExecutionListener 를 제공한다.
+- 초기화 : 잡 실행 전에 준비해둬야 할 뭔가가 있다면 beforeJob 메서드가 해당 로직을 실행하기에 좋은 곳이다.
+- 정리 : 실행 이후에 정리작업을 수행한다(파일을 삭제하거나, 보관하는 작업 등). 정리 작업은 잡의 성공 / 실패에 영향을 미치지 않지만 실행돼야 한다.
+afterJob 은 이러한 일을 처리하기에 완벽한 곳이다.
+
+잡 리스너를 작성하는 두가지 방법이 있다.
+첫번째는 JobExecutionListener 인터페이스를 구현하는 방법이다.
+JobExecutionListener 는 beforeJob 과 afterJob 이라는 두 메서드를 가지고 있다.
+각각 잡이 실행되기 전과 후에 실행된다. afterJob 은 잡의 완료상태에 관계없이 호출된다.
+그러므로 잡의 종료 상태에 따라 어떤 일을 수행할지 결정할 수도 있다.
+`JobExecutionListener.java` -> 또한 JobExecutionListener 구현없이 `@BeforeJob` , `@AfterJob` 애너테이션을 사용할 수도 있다. `JobExecutionListener.java`
+애너테이션을 사용하려면 구성 방법이 약간 달라진다. 스프링 배치에서 이 리스너를 잡에 주입하려면 래핑을 해야한다.
+```
+    @Bean
+    public Job job() {
+        //
+        return this.jobBuilderFactory.get("basicJob")
+                .start(step1())
+                .validator(validator())
+                .incrementer(new DailyJobTimestamper()) // DailyJobTimestamper 사용시
+                .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
+                .build();
+    }
+```
+*실제로 사용해보니 래핑을 하지않아도 돌아가긴했다.*
+```
+    @Bean
+    public Job job() {
+        //
+        return this.jobBuilderFactory.get("basicJob")
+                .start(step1())
+                .validator(validator())
+                .incrementer(new DailyJobTimestamper()) // DailyJobTimestamper 사용시
+                .listener(new JobLoggerListener())
+                .build();
+    }
+```
+애너테이션을 사용해도 위처럼 등록해서 돌아갔다.
+
+
+

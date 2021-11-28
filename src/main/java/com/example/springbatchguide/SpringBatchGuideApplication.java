@@ -1,5 +1,6 @@
 package com.example.springbatchguide;
 
+import com.example.springbatchguide.listener.JobLoggerListener;
 import com.example.springbatchguide.timestemper.DailyJobTimestamper;
 import com.example.springbatchguide.validate.ParameterValidator;
 import org.springframework.batch.core.Job;
@@ -12,6 +13,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.CompositeJobParametersValidator;
 import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -92,6 +94,8 @@ public class SpringBatchGuideApplication {
                 .validator(validator())
 //                .incrementer(new RunIdIncrementer()) // RunIdIncrementer 사용시
                 .incrementer(new DailyJobTimestamper()) // DailyJobTimestamper 사용시
+//                .listener(new JobLoggerListener())
+                .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
                 .build();
     }
 
