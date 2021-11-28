@@ -53,3 +53,11 @@ DefaultJobParametersValidator 는 requiredKeys 와 optionalKeys 라는 두가지
 
 - 기본적으로 하나의 JobBuilder 에 하나의 JobParameterValidator 만 등록할 수 있다.
 스프링 배치는 이러한 문제점을 해결하기위해 CompositeJobParametersValidator 를 제공한다.
+
+## 01-잡구성하기 01) 잡 파라미터 증가시키기
+- JobParametersIncrementer 는 잡에서 사용할 파라미터를 고유하게 생성할 수 있도록 스프링 배치가 제공하는 인터페이스이다.
+기본적으로 파라미터 이름이 run.id 인 long 타입 파라미터의 값을 증가시킨다.
+- RunIdIncrementer 를 적용하려면 잡 구성 작업 외에 추가적으로 JobParametersValidator 에 추가해 줘야한다.
+
+- 잡 실행시 마다 타임스탬프를 파라미터로 사용할 수도 있다.(`DailyJobTimestamper.java`) 이 방식을 사용하면 하루에 한번 실행되는 잡에 사용하기 유용할 것이다.
+- 

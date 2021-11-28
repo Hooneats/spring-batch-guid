@@ -1,5 +1,6 @@
 package com.example.springbatchguide;
 
+import com.example.springbatchguide.timestemper.DailyJobTimestamper;
 import com.example.springbatchguide.validate.ParameterValidator;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.CompositeJobParametersValidator;
 import org.springframework.batch.core.job.DefaultJobParametersValidator;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -38,7 +40,8 @@ public class SpringBatchGuideApplication {
 
         DefaultJobParametersValidator defaultJobParametersValidator = new DefaultJobParametersValidator(
                 new String[]{"fileName"},
-                new String[]{"name"}
+//                new String[]{"name", "run.id"} // RunIdIncrementer 사용시
+                new String[]{"name", "currentDate"} // DailyJobTimestamper 사용시
         );
 
         defaultJobParametersValidator.afterPropertiesSet();
@@ -58,7 +61,7 @@ public class SpringBatchGuideApplication {
     }
 
     @Bean
-    public Tasklet helloWorldTasklet() {
+    public Tasklet helloWorldTasklet() { // ChunkContext 방식의 파라미터 접근
         return (stepContribution, chunkContext) -> {
             String name = (String) chunkContext.getStepContext()
                     .getJobParameters()
@@ -70,7 +73,7 @@ public class SpringBatchGuideApplication {
 
     @Bean
     @StepScope
-    public Tasklet TaskletHelloWorldTasklet(
+    public Tasklet TaskletHelloWorldTasklet( // 늦은 바인딩 방식의 파라미터 접근
             @Value("#{jobParameters['name']}") String name,
             @Value("#{jobParameters['fileName']}") String fileName
     ) {
@@ -87,6 +90,8 @@ public class SpringBatchGuideApplication {
         return this.jobBuilderFactory.get("basicJob")
                 .start(step1())
                 .validator(validator())
+//                .incrementer(new RunIdIncrementer()) // RunIdIncrementer 사용시
+                .incrementer(new DailyJobTimestamper()) // DailyJobTimestamper 사용시
                 .build();
     }
 
