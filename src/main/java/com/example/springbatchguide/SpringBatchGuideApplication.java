@@ -60,6 +60,7 @@ public class SpringBatchGuideApplication {
         //
         return this.stepBuilderFactory.get("step1")
                 .tasklet(TaskletHelloWorldTasklet(null, null)).build();
+        /** Tasklet 을 구성하는 방법은 람다식을 이용해서도 할 수 있다. */
     }
 
     @Bean
