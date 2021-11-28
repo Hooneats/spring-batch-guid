@@ -31,3 +31,12 @@ java -jar demo.jar executionDate(date)=2020/12/27
 java -jar demo.jar executionDate(date)=2020/12/27 -name=Michael
 ```
 
+## 01-잡구성하기 01) 잡 파라미터에 접근하기
+- ChunkContext : step1 의 tasklet 을 보면 execute 메서드가 두개의 파라미터를 전달 방고있다.
+stepContribution 은 아직 커밋되지 않은 현재 트랜젝션에 대한 정보(쓰기수, 읽기수 등)를 가지고 있다.
+chunkContext 는 ChunkContext 의 인스턴스로 실행 시점의 잡 상태를 제공한다. 또한 tasklet 내에서는 처리 중인 청크와 관련된 정보도 가지고 있다.
+해당 청크 정보는 스텝 및 잡과 관련된 정보도 가지고 있다. ChunkContext 는 JobParameters 가 포함된 StepContext 의 참조가 있다.
+
+- 늦은 바인딩 : 특정 부분에 파라미터를 전달하는 가장 쉬운 방법은 스프링 구성을 사용해 주입하는 것이다.
+JobParameters 는 변경할 수 없으므로 부트스트랩 시에 바인딩하는 것이 좋다.
+

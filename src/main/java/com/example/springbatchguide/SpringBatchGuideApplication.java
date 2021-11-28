@@ -29,10 +29,17 @@ public class SpringBatchGuideApplication {
     public Step step1() {
         //
         return this.stepBuilderFactory.get("step1")
-                .tasklet(((stepContribution, chunkContext) -> {
-                    System.out.println("Hello World!");
-                    return RepeatStatus.FINISHED;
-                })).build();
+                .tasklet(helloWorldTasklet()).build();
+    }
+
+    private Tasklet helloWorldTasklet() {
+        return (stepContribution, chunkContext) -> {
+            String name = (String) chunkContext.getStepContext()
+                    .getJobParameters()
+                    .get("name");
+            System.out.println(String.format("Hello, %s!", name));
+            return RepeatStatus.FINISHED;
+        };
     }
 
     @Bean
