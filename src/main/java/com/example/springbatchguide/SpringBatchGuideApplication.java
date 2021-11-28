@@ -26,23 +26,20 @@ public class SpringBatchGuideApplication {
     private StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Step step() {
+    public Step step1() {
         //
         return this.stepBuilderFactory.get("step1")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("Hello, world!");
-                        return RepeatStatus.FINISHED;
-                    }
-                }).build();
+                .tasklet(((stepContribution, chunkContext) -> {
+                    System.out.println("Hello World!");
+                    return RepeatStatus.FINISHED;
+                })).build();
     }
 
     @Bean
     public Job job() {
         //
-        return this.jobBuilderFactory.get("job")
-                .start(step())
+        return this.jobBuilderFactory.get("basicJob")
+                .start(step1())
                 .build();
     }
 

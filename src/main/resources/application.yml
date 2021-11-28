@@ -8,7 +8,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernage:
         format_sql: true
@@ -17,3 +17,6 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  batch:
+    jdbc:
+      initialize-schema: always
