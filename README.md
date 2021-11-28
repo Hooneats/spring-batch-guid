@@ -109,4 +109,21 @@ JobExecutionListener 는 beforeJob 과 afterJob 이라는 두 메서드를 가�
 일반적으로 웹은 상태를 HttpSession 을 이용해서 저장한다. 배치에서의 이 역할을 ExecutionContext 가 한다고 생각하면된다.
 웹과의 한가지 차이점은 ExecutionContext 는 여러개가 존재할 수 있다는 점이다. JobExecution 처럼 각 StepExecution 도 마찬가지로 ExecutionContext 를 가진다.
 ExecutionContext 가 담고 있는 모든 것이 JobRepository 에 저장되므로 안전하다.
+1) 잡에 ExecutionContext name 추가하기
+2) 스텝에 ExecutionContext name 추가하기 
+3) 스텝에 ExecutionContext name 을 추가한것을 잡의 ExecutionContext name 으로 승격하기
+4) ItemStream 을 사용해 ExecutionContext 에 접근하기  ->  추후에 다룸
 
+세번쨰, 승격하는 방법은 스텝 간에 공유할 데이터가 있지만 첫 번째 스텝이 성공했을 때만 공유하게 하고 싶을 때 유용하다.
+승격을 수행하는 메커니즘은 ExecutionContextPromotionListener 를 통해 이뤄진다.
+BatchConfiguration.java 의 예를 보면 리스너가 배치 잡에 구성되고 name 키가 스텝의 ExecutionContext 에 있다고 가정했을때 name 키를 승격시키는 방법을 보여준다.
+- promotionListener 가 성공적으로 완료 상태로 종료된 이후에 스텝의 ExecutionContext 에서 "name" 키를 찾으면 잡의 ExecutionContext 에 복사한다.
+- "name" 키를 찾지 못하더라도 기본적으로 아무 일도 일어나지 않지만 리스너가 예외를 발생하도록 구성할 수도 있다.
+
+*BatchConfigurationV1.java 를 사용해서 새로 job 을 등록해주었다.
+이떄 실행하는 job 과 step 의 메서드 이름이 중복되지않도록 작성해야한다.*
+
+# 03-ExecutionContext-ExecutionContext 저장하기
+- 잡이 처리되는 동안 스프링 배치는 각 청크를 커밋하면서 잡이나 스텝의 상태를 저장한다.
+- 구체적으로는 잡과 스텝의 현재 ExecutionContext 를 데이터베이스에 저장한다.
+- BATCH_JOB_EXECUTION_CONTEXT 에 저장된다.
