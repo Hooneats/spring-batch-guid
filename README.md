@@ -104,5 +104,9 @@ JobExecutionListener 는 beforeJob 과 afterJob 이라는 두 메서드를 가�
 ```
 애너테이션을 사용해도 위처럼 등록해서 돌아갔다.
 
-
+# 03-ExecutionContext
+배치 처리는 특성상 상태를 가지고 있다. 이러한 잡 상태는 JobExecution 의 ExecutionContext 에 저장된다.
+일반적으로 웹은 상태를 HttpSession 을 이용해서 저장한다. 배치에서의 이 역할을 ExecutionContext 가 한다고 생각하면된다.
+웹과의 한가지 차이점은 ExecutionContext 는 여러개가 존재할 수 있다는 점이다. JobExecution 처럼 각 StepExecution 도 마찬가지로 ExecutionContext 를 가진다.
+ExecutionContext 가 담고 있는 모든 것이 JobRepository 에 저장되므로 안전하다.
 
